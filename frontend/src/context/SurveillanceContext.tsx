@@ -26,7 +26,7 @@ export function SurveillanceProvider({ children }: { children: React.ReactNode }
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
       return crypto.randomUUID()
     }
-    return `temp-${Date.now()}-${nextId.current++}`
+    return `temp-${Date.now()}-${Math.random().toString(16).slice(2)}-${nextId.current++}`
   }
 
   useEffect(() => {
