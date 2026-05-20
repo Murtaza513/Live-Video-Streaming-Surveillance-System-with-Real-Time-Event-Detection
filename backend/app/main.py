@@ -2,6 +2,7 @@ import asyncio
 import base64
 import json
 import logging
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 from fastapi import Depends, FastAPI, WebSocket, WebSocketDisconnect
@@ -18,10 +19,24 @@ from app.services.detection import MotionAndPersonDetector
 from app.services.event_repository import EventRepository
 from app.services.video_capture import CameraService
 
+camera_service = CameraService()
+detector = MotionAndPersonDetector()
+compressor = AdaptiveCompressor()
+
+
 configure_logging()
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title=settings.app_name)
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    camera_service.close()
+
+
+app = FastAPI(title=settings.app_name, lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
@@ -30,21 +45,6 @@ app.add_middleware(
     allow_headers=['*'],
 )
 app.include_router(events_router)
-
-camera_service = CameraService()
-detector = MotionAndPersonDetector()
-compressor = AdaptiveCompressor()
-
-
-@app.on_event('startup')
-async def startup() -> None:
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-@app.on_event('shutdown')
-def shutdown() -> None:
-    camera_service.close()
 
 
 @app.get('/health')

@@ -20,7 +20,7 @@ export function SurveillanceProvider({ children }: { children: React.ReactNode }
   const [events, setEvents] = useState<EventRecord[]>([])
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting')
   const [latestMotion, setLatestMotion] = useState(0)
-  const nextId = useRef(-1)
+  const nextId = useRef(0)
 
   useEffect(() => {
     let mounted = true
@@ -53,7 +53,7 @@ export function SurveillanceProvider({ children }: { children: React.ReactNode }
 
         if (payload.event_type && payload.timestamp) {
           const item: EventRecord = {
-            id: nextId.current--,
+            id: `temp-${Date.now()}-${nextId.current++}`,
             event_type: payload.event_type,
             confidence: payload.confidence ?? 0,
             message:

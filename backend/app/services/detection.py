@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 
 import cv2
 import numpy as np
@@ -15,6 +16,7 @@ class DetectionResult:
 
 class MotionAndPersonDetector:
     def __init__(self) -> None:
+        self.logger = logging.getLogger(__name__)
         self.previous_gray: np.ndarray | None = None
         self.yolo_model = None
 
@@ -23,7 +25,8 @@ class MotionAndPersonDetector:
                 from ultralytics import YOLO
 
                 self.yolo_model = YOLO(settings.yolo_model)
-            except Exception:
+            except Exception as exc:
+                self.logger.warning('YOLO initialization failed, falling back to motion detection: %s', exc)
                 self.yolo_model = None
 
     def _motion_score(self, frame: np.ndarray) -> float:

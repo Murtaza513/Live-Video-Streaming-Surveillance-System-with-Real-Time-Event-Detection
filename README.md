@@ -78,6 +78,7 @@ cd Live-Video-Streaming-Surveillance-System-with-Real-Time-Event-Detection
 ```bash
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
+cp .env.example .env
 ```
 
 ### 3) Run the full stack
@@ -85,6 +86,8 @@ cp frontend/.env.example frontend/.env
 ```bash
 docker compose up --build
 ```
+
+Update `.env` and set a strong `POSTGRES_PASSWORD` before production use.
 
 ### 4) Open applications
 

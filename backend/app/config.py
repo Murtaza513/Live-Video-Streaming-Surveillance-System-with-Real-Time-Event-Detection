@@ -7,7 +7,7 @@ class Settings(BaseSettings):
 
     app_name: str = 'Live Surveillance API'
     log_level: str = 'INFO'
-    database_url: str = 'postgresql+asyncpg://postgres:postgres@localhost:5432/surveillance'
+    database_url: str = 'postgresql+asyncpg://user:change_me@localhost:5432/surveillance'
     websocket_fps: int = 10
     webcam_index: int = 0
     frame_width: int = 960

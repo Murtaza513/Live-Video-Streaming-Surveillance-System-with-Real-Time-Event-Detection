@@ -9,7 +9,7 @@ export type StreamMessage = {
 }
 
 export type EventRecord = {
-  id: number
+  id: number | string
   event_type: string
   confidence: number
   message: string
