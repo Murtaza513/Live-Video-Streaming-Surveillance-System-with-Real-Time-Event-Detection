@@ -22,6 +22,13 @@ export function SurveillanceProvider({ children }: { children: React.ReactNode }
   const [latestMotion, setLatestMotion] = useState(0)
   const nextId = useRef(0)
 
+  const createTempId = () => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID()
+    }
+    return `temp-${Date.now()}-${nextId.current++}`
+  }
+
   useEffect(() => {
     let mounted = true
     fetchEventHistory()
@@ -53,7 +60,7 @@ export function SurveillanceProvider({ children }: { children: React.ReactNode }
 
         if (payload.event_type && payload.timestamp) {
           const item: EventRecord = {
-            id: `temp-${Date.now()}-${nextId.current++}`,
+            id: createTempId(),
             event_type: payload.event_type,
             confidence: payload.confidence ?? 0,
             message:
